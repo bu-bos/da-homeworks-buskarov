@@ -1,26 +1,62 @@
 Задача 1
-#Вместо этой строки сюда писать запрос - ответ на задачу 1
+SELECT orderNumber, productCode, quantityOrdered*priceEach AS total
+FROM orderdetails
+ORDER BY total DESC
+LIMIT 10;
 
 
 Задача 2
-#Вместо этой строки сюда писать запрос - ответ на задачу 2
+SELECT orderNumber, SUM(quantityOrdered*priceEach) AS total
+FROM orderdetails
+GROUP BY orderNumber
+HAVING total > 59000;
 
 
 Задача 3
-#Вместо этой строки сюда писать запрос - ответ на задачу 3
+SELECT orders.orderNumber, orders.orderDate, orders.status, orderdetails.total
+FROM orders
+INNER JOIN (
+    SELECT orderNumber, SUM(quantityOrdered*priceEach) AS total
+    FROM orderdetails
+    GROUP BY orderNumber
+    HAVING total > 59000
+) orderdetails ON orders.orderNumber = orderdetails.orderNumber;
+
 
 
 Задача 4
-#Вместо этой строки сюда писать запрос - ответ на задачу 4
+SELECT customers.contactFirstName, customers.contactLastName, customers.country, orders.orderNumber, orders.orderDate, orders.status, orderdetails.total
+FROM customers
+INNER JOIN orders ON customers.customerNumber = orders.customerNumber
+INNER JOIN (
+    SELECT orderNumber, SUM(quantityOrdered*priceEach) AS total
+    FROM orderdetails
+    GROUP BY orderNumber
+    HAVING total > 59000
+) orderdetails ON orders.orderNumber = orderdetails.orderNumber;
 
 
 Задача 5
-#Вместо этой строки сюда писать запрос - ответ на задачу 5
-
+SELECT productName, SUM(quantityOrdered * priceEach) AS total
+FROM orderdetails
+JOIN products ON orderdetails.productCode = products.productCode
+GROUP BY productName
+ORDER BY total DESC
+LIMIT 10;
 
 Задача 6
-#Вместо этой строки сюда писать запрос - ответ на задачу 6
+SELECT employees.firstName, employees.lastName, customers.contactFirstName, customers.contactLastName
+FROM employees
+LEFT JOIN customers ON employees.employeeNumber = customers.salesRepEmployeeNumber
 
+UNION ALL
+
+SELECT employees.firstName, employees.lastName, customers.contactFirstName, customers.contactLastName
+FROM employees
+RIGHT JOIN customers ON employees.employeeNumber = customers.salesRepEmployeeNumber
+WHERE employees.employeeNumber IS NULL;
 
 Задача 7
-#Вместо этой строки сюда писать запрос - ответ на задачу 7
+SELECT e1.firstName, e1.lastName, e1.jobTitle, e2.firstName AS subFirstName, e2.lastName AS subLastName
+FROM employees e1
+LEFT JOIN employees e2 ON e1.employeeNumber = e2.reportsTo;
